@@ -35,9 +35,9 @@ class GitnowledgeContextManager:
         self.cache_dir = cache_dir
         self.token = token
         if self.git_host == "github":
-            self.url = f"https://api.github.com"
+            self.base_url = f"https://api.github.com"
         elif self.git_host == "gitlab":
-            self.url = f"https://gitlab.com/api/v4"
+            self.base_url = f"https://gitlab.com/api/v4"
 
         self.update_attributes(kwargs)
 
@@ -68,6 +68,9 @@ class GitnowledgeContextManager:
             return
 
     def __enter__(self):
+        return self
+
+    def get(self):
         return self
 
     def __exit__(self, exc_type, exc_value, exc_tb):
