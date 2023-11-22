@@ -15,7 +15,7 @@ class GitnowledgeContextManager:
         enabled: bool = True,
         git_host: str = "github",
         repo_slug: str | None = None,
-        gitlab_project_id: int | None = None,
+        gitlab_project_id: str | None = None,
         branch: str = "main",
         docs_path: str = "docs/",
         exclude: list[str] | None = None,
@@ -26,6 +26,9 @@ class GitnowledgeContextManager:
         self.enabled = enabled
         self.git_host = git_host.strip().lower()
         self.repo_slug = repo_slug
+        if self.repo_slug is not None:
+            if self.repo_slug[-1] == "/":
+                self.repo_slug = self.repo_slug[:-1]
         self.gitlab_project_id = gitlab_project_id
         self.branch = branch
         self.docs_path = docs_path
@@ -35,9 +38,9 @@ class GitnowledgeContextManager:
         self.cache_dir = cache_dir
         self.token = token
         if self.git_host == "github":
-            self.base_url = f"https://api.github.com"
+            self.base_url = "https://api.github.com"
         elif self.git_host == "gitlab":
-            self.base_url = f"https://gitlab.com/api/v4"
+            self.base_url = "https://gitlab.com/api/v4"
 
         self.update_attributes(kwargs)
 
