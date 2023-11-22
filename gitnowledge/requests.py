@@ -11,13 +11,13 @@ def get_api_url(
     context = context_manager.get()
     url = context.base_url
     if context.git_host == "github":
-        url += "/repos/" + context.repo_slug
-        url += "/repository/commits?path=" + path
-        url += "&ref_name=" + context.branch
+        url += "/repos/" + context.repo_slug + "/commits"
+        url += (
+            "?sha=" + context.branch + "&path=" + path + "&ref_name=" + context.branch
+        )
     elif context.git_host == "gitlab":
         url += "/projects/" + context.gitlab_project_id + "/repository/commits"
         url += "?branch=" + context.branch + "&path=" + path
-        # url += "/commits?path=" + path + "&sha=" + context.branch + "&per_page=100"
     logger.debug("URL: {}", url)
     return str(url)
 
@@ -31,10 +31,14 @@ def query_git_host_api(path: str, context_manager: "GitnowledgeContextManager") 
     """
     context = context_manager.get()
     url = get_api_url(path, context_manager)
-    if context.git_host == "github":
-        auth_header = {"Authorization": "token " + context.token}
-    else:
+    if context.git_host == "gitlab":
         auth_header = {"PRIVATE-TOKEN": context.token}
+    elif context.token is None:
+        # github without token
+        auth_header = {}
+    else:
+        # GitHub with token
+        auth_header = {"Authorization": "token " + context.token}
     res = requests.get(url=url, headers=auth_header, timeout=10)
 
     if res.status_code != 200:

@@ -32,3 +32,17 @@ def gitnowledge_gitlab_context():
         cache_dir=tempdir.name,
     )
     return context_manager
+
+
+@pytest.fixture
+def gitnowledge_github_context():
+    tempdir = tempfile.TemporaryDirectory()
+    context_manager = GitnowledgeContextManager(
+        enabled=True,
+        git_host="github",
+        repo_slug="oasci/gitnowledge",
+        branch="main",
+        docs_path="docs/",
+        cache_dir=tempdir.name,
+    )
+    return context_manager
